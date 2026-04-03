@@ -6,11 +6,11 @@ export async function migrate(database: SQLiteDatabase){
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             document TEXT,
+            phone TEXT,
             street TEXT,
             number TEXT,
             district TEXT,
             city TEXT
-            state TEXT
         );
     `);
 }
