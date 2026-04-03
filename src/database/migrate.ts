@@ -5,11 +5,12 @@ export async function migrate(database: SQLiteDatabase){
         CREATE TABLE IF NOT EXISTS accounts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            cpf TEXT,
-            rua TEXT,
-            numero TEXT,
-            bairro TEXT,
-            cidade TEXT
+            document TEXT,
+            street TEXT,
+            number TEXT,
+            district TEXT,
+            city TEXT
+            state TEXT
         );
     `);
 }

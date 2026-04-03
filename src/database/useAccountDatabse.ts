@@ -3,11 +3,12 @@ import { useSQLiteContext } from "expo-sqlite";
 export type AccountDatabase = {
     id: number,
     name: string,
-    cpf: string,
-    rua?: string,
-    numero?: string,
-    bairro?: string,
-    cidade?: string
+    document: string,
+    street?: string,
+    number?: string,
+    district?: string,
+    city?: string
+    state?: string
 }
 
 export function useAccountDatabase() {
@@ -15,13 +16,13 @@ export function useAccountDatabase() {
 
     async function create(data: Omit<AccountDatabase, "id">) {
         const statement = await database.prepareAsync(
-            "INSERT INTO accounts (name, cpf) VALUES ($name, $cpf)"
+            "INSERT INTO accounts (name, document) VALUES ($name, $document)"
         );
 
         try {
             const result = await statement.executeAsync({
                 $name: data.name,
-                $cpf: data.cpf
+                $document: data.document
             })
 
             const insertedRowId = result.lastInsertRowId.toLocaleString()
