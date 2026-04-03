@@ -5,6 +5,7 @@ import { Feather } from "@expo/vector-icons";
 import { AccountDatabase } from "../types/accountDatabase";
 import { useAccountDatabase } from "../database/useAccountDatabse";
 import { router } from "expo-router";
+import { formatPhone } from "../utils/formatPhone";
 
 interface ShowAccountProps {
     account: AccountDatabase;
@@ -46,7 +47,7 @@ export default function ShowAccount({ account, onRefresh }: ShowAccountProps) {
                     <Text style={styles.name}>{account.name}</Text>
                     <View style={styles.infoRow}>
                         <Feather name='phone' size={18} color={colors.darkGray} />
-                        <Text style={styles.rowText}>{account.phone}</Text>
+                        <Text style={styles.rowText}>{formatPhone(account.phone)}</Text>
                     </View>
                 </View>
                 <TouchableOpacity style={styles.deleteButton} activeOpacity={0.7} onPress={() => deleteAccount()}>

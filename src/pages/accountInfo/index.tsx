@@ -32,7 +32,7 @@ export default function AccountInfo({ id }: AccountInfoProps) {
                     <Separator color={colors.lightGray} />
                     <Separator label="Endereço" icon="map-pin" color='white' />
                     <View style={styles.textRow}>
-                        <Text style={styles.text}>Rua: {account?.street}, {account?.number}</Text>
+                        <Text style={styles.text}>Rua: {account?.street} {account?.number ? `, ${account.number}` : ''}</Text>
                     </View>
                     <View style={styles.textRow}>
                         <Text style={styles.text}>Bairro: {account?.district}</Text>

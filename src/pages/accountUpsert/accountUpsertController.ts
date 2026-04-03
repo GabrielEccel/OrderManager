@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAccountDatabase } from "../../database/useAccountDatabse"
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router/build/hooks";
+import { Alert } from "react-native";
+import { formatPhone } from "../../utils/formatPhone";
 
 export default function AccountUpsertController() {
 
@@ -11,7 +13,8 @@ export default function AccountUpsertController() {
     const accountDatabase = useAccountDatabase();
 
     const [name, setName] = useState<string>();
-    const [phone, setPhone] = useState<string>();
+    const [phone, setPhone] = useState<string>('');
+    const [rawPhone, setRawPhone] = useState<string>('');
     const [street, setStreet] = useState<string>();
     const [number, setNumber] = useState<string>();
     const [district, setDistrict] = useState<string>();
@@ -22,10 +25,11 @@ export default function AccountUpsertController() {
             try {
                 const data = await accountDatabase.getById(id.toString());
 
-                if(!data) return;
+                if (!data) return;
 
                 setName(data.name);
-                setPhone(data.phone);
+                setRawPhone(data.phone);
+                setPhone(formatPhone(data.phone));
                 setStreet(data.street);
                 setNumber(data.number);
                 setDistrict(data.district);
@@ -44,19 +48,22 @@ export default function AccountUpsertController() {
 
     async function saveAccount() {
 
-        if(!name || !phone) return;
+        if (!name || !rawPhone) {
+            Alert.alert("Erro ao salvar", "É necessário preencher o Nome e o Telefone");
+            return;
+        };
 
         try {
             const payload = {
                 name,
-                phone,
+                phone: rawPhone?.toString(),
                 street: street || "",
                 number: number || "",
                 district: district || "",
                 city: city || "",
             }
 
-            if(isNew){
+            if (isNew) {
                 await accountDatabase.create(payload)
             } else {
                 await accountDatabase.update({
@@ -77,7 +84,10 @@ export default function AccountUpsertController() {
     }
 
     const togglePhone = (value: string) => {
-        setPhone(value);
+        const numbers = value.replace(/\D/g, '').slice(0, 11);
+
+        setRawPhone("55" + numbers);
+        setPhone(formatPhone(numbers));
     }
 
     const toggleStreet = (value: string) => {
