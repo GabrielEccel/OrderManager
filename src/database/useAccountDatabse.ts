@@ -6,18 +6,17 @@ export function useAccountDatabase() {
 
     async function create(data: Omit<AccountDatabase, "id">) {
         const statement = await database.prepareAsync(
-            "INSERT INTO accounts (name, document, phone, street, number, district, city) VALUES ($name, $document, $phone, $street, $number, $district, $city)"
+            "INSERT INTO accounts (name, phone, street, number, district, city) VALUES ($name, $phone, $street, $number, $district, $city)"
         );
 
         try {
             const result = await statement.executeAsync({
                 $name: data.name,
-                $document: data.document,
                 $phone: data.phone,
-                $street: data.street ?? null,
-                $number: data.number ?? null,
-                $district: data.district ?? null,
-                $city: data.city ?? null
+                $street: data.street ?? "",
+                $number: data.number ?? "",
+                $district: data.district ?? "",
+                $city: data.city ?? ""
             })
 
             const insertedRowId = result.lastInsertRowId.toLocaleString()
@@ -31,19 +30,15 @@ export function useAccountDatabase() {
         }
     }
 
-    async function searchByName(name: string) {
+    async function getById(id: string) {
         try {
-            const query = "SELECT * FROM accounts WHERE name LIKE ?"
-
-            const response = await database.getAllAsync<AccountDatabase>(query, `%${name}%`)
-
-            return response;
+            return await database.getFirstAsync<AccountDatabase>(`SELECT * FROM accounts WHERE Id = ${id}`)
         } catch (error) {
             throw error;
         }
     }
 
-    async function listAllAccounts() {
+    async function getAllAccounts() {
         try {
             const query = "SELECT * FROM accounts ORDER BY name"
 
@@ -52,6 +47,28 @@ export function useAccountDatabase() {
             return response
         } catch (error) {
             throw error;
+        }
+    }
+
+    async function update(data: AccountDatabase) {
+        const statement = await database.prepareAsync(
+            "UPDATE accounts SET name = $name, phone = $phone, street = $street, number = $number, district = $district, city = $city WHERE id = $id"
+        );
+
+        try {
+            await statement.executeAsync({
+                $name: data.name,
+                $phone: data.phone,
+                $street: data.street ?? null,
+                $number: data.number ?? null,
+                $district: data.district ?? null,
+                $city: data.city ?? null,
+                $id: data.id
+            })
+        } catch (error) {
+            throw error;
+        } finally {
+            await statement.finalizeAsync()
         }
     }
 
@@ -74,8 +91,9 @@ export function useAccountDatabase() {
 
     return {
         create,
-        searchByName,
-        listAllAccounts,
+        getById,
+        getAllAccounts,
+        update,
         deleteById,
         deleteAllAccounts
     }

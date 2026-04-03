@@ -1,9 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Separator from "./Separator";
 import { colors } from "../global/colors";
 import { Feather } from "@expo/vector-icons";
 import { AccountDatabase } from "../types/accountDatabase";
 import { useAccountDatabase } from "../database/useAccountDatabse";
+import { router } from "expo-router";
 
 interface ShowAccountProps {
     account: AccountDatabase;
@@ -13,33 +14,42 @@ interface ShowAccountProps {
 export default function ShowAccount({ account, onRefresh }: ShowAccountProps) {
 
     const accountDatabase = useAccountDatabase();
-    
-    async function deleteAccount(id: string){
-        try {
-            const response = await accountDatabase.deleteById(id);
-            
-        } catch (error) {
-            console.log(error);
-        } finally {
-            onRefresh();
-        }
+
+    async function deleteAccount() {
+
+        Alert.alert("Excluir conta", `Tem certeza que deseja excluir ${account.name}?`, [
+            {
+                text: "Cancelar",
+                style: "cancel"
+            },
+            {
+                text: "Cofirmar",
+                style: "destructive",
+                onPress: async () => {
+                    try {
+                        await accountDatabase.deleteById(account.id.toString());
+                        onRefresh();
+                    } catch (error) {
+                        console.log(error);
+                    }
+
+                }
+            }
+        ])
+
     }
 
     return (
-        <TouchableOpacity style={styles.container} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.container} activeOpacity={0.7} onPress={() => router.push(`/accountInfo/${account.id}`)}>
             <View style={styles.row}>
                 <View style={styles.info}>
                     <Text style={styles.name}>{account.name}</Text>
-                    <View style={styles.infoRow}>
-                        <Feather name='file' size={18} color={colors.darkGray} />
-                        <Text style={styles.rowText}>{account.document}</Text>
-                    </View>
                     <View style={styles.infoRow}>
                         <Feather name='phone' size={18} color={colors.darkGray} />
                         <Text style={styles.rowText}>{account.phone}</Text>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.deleteButton} activeOpacity={0.7} onPress={() => deleteAccount(account.id.toString())}>
+                <TouchableOpacity style={styles.deleteButton} activeOpacity={0.7} onPress={() => deleteAccount()}>
                     <Feather name='trash' size={18} color='white' />
                 </TouchableOpacity>
             </View>
@@ -50,7 +60,7 @@ export default function ShowAccount({ account, onRefresh }: ShowAccountProps) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
-        height: 120,
+        height: 90,
         width: '100%',
         borderRadius: 16,
         overflow: 'hidden'

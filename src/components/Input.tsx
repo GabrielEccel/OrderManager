@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     textInput: {
         height: 54,
         borderWidth: 1,
-        borderColor: colors.midGray,
+        borderColor: colors.lightGray,
         borderRadius: 7,
         paddingHorizontal: 16
     }

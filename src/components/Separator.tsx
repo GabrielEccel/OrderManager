@@ -5,13 +5,14 @@ import { colors } from "../global/colors";
 interface SeparatorProps {
     label?: string,
     icon?: keyof typeof Feather.glyphMap,
-    color?: string 
+    color?: string,
+    margin?: number
 }
 
-export default function Separator({label, icon, color = colors.darkGray}: SeparatorProps){
+export default function Separator({label, icon, color = colors.midGray, margin = 30}: SeparatorProps){
     return(
-        <View style={styles.container}>
-            <Feather name={icon} size={18} color={colors.darkGray} />
+        <View style={[styles.container, {height: margin}]}>
+            <Feather name={icon} size={18} color={colors.midGray} />
             <Text style={styles.text}>{label}</Text>
             <View style={[styles.line, {backgroundColor: color}]}></View>
         </View>
@@ -26,8 +27,8 @@ const styles = StyleSheet.create({
     },
     text:{
         fontSize: 16,
-        color: colors.darkGray,
-        fontWeight: '500'
+        color: colors.midGray,
+        fontWeight: '600'
     },
     line: {
         height: 1,

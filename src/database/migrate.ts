@@ -5,7 +5,6 @@ export async function migrate(database: SQLiteDatabase){
         CREATE TABLE IF NOT EXISTS accounts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            document TEXT,
             phone TEXT,
             street TEXT,
             number TEXT,

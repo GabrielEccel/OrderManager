@@ -6,6 +6,7 @@ import { useFocusEffect } from "expo-router";
 export default function AccountController() {
     const accountDatabase = useAccountDatabase();
     const [accounts, setAccounts] = useState<AccountDatabase[]>();
+    const [loading, setLoading] = useState(true);
 
     useFocusEffect(
         useCallback(() => {
@@ -14,12 +15,21 @@ export default function AccountController() {
     );
 
     async function fetchAccounts() {
-        const response = await accountDatabase.listAllAccounts();
-        setAccounts(response);
+        setLoading(true);
+
+        try {
+            const response = await accountDatabase.getAllAccounts();
+            setAccounts(response);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
     }
 
     return {
         accounts,
-        fetchAccounts
+        fetchAccounts,
+        loading
     }
 }

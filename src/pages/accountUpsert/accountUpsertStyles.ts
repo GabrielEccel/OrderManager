@@ -14,7 +14,7 @@ export const accountUpsertStyles = StyleSheet.create({
         padding: 24,
         gap: 24,
         backgroundColor: 'white',
-        borderRadius: 8
+        borderRadius: 20
     },
     button:{
         alignItems: 'center',

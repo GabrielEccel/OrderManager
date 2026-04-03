@@ -6,7 +6,7 @@ import { router } from "expo-router";
 export default function AddAccountButton() {
 
     const handleNavigate = () => {
-        router.push('/accountUpsert')
+        router.push('/accountUpsert/new');
     }
 
     return (

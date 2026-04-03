@@ -1,31 +1,72 @@
 import { useEffect, useState } from "react";
 import { useAccountDatabase } from "../../database/useAccountDatabse"
 import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router/build/hooks";
 
-export default function AccountUpsertController(){
+export default function AccountUpsertController() {
+
+    const { id } = useLocalSearchParams();
+    const isNew = id === "new";
+
     const accountDatabase = useAccountDatabase();
 
     const [name, setName] = useState<string>();
-    const [document, setDocument] = useState<string>();
     const [phone, setPhone] = useState<string>();
     const [street, setStreet] = useState<string>();
     const [number, setNumber] = useState<string>();
     const [district, setDistrict] = useState<string>();
     const [city, setCity] = useState<string>();
 
-    async function saveAccount(){
+    useEffect(() => {
+        async function loadAccount() {
+            try {
+                const data = await accountDatabase.getById(id.toString());
+
+                if(!data) return;
+
+                setName(data.name);
+                setPhone(data.phone);
+                setStreet(data.street);
+                setNumber(data.number);
+                setDistrict(data.district);
+                setCity(data.city);
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        if (!isNew) {
+            loadAccount();
+        }
+
+    }, [id]);
+
+    async function saveAccount() {
+
+        if(!name || !phone) return;
+
         try {
-            const response = await accountDatabase.create({
-                name: name ?? "",
-                document: document ?? "",
-                phone: phone ?? "",
-                street: street ?? "",
-                number: number ?? "",
-                district: district ?? "",
-                city: city ?? ""
-            })
+            const payload = {
+                name,
+                phone,
+                street: street || "",
+                number: number || "",
+                district: district || "",
+                city: city || "",
+            }
+
+            if(isNew){
+                await accountDatabase.create(payload)
+            } else {
+                await accountDatabase.update({
+                    id: Number(id),
+                    ...payload
+                })
+            }
 
             router.back()
+
         } catch (error) {
             console.log(error)
         }
@@ -33,10 +74,6 @@ export default function AccountUpsertController(){
 
     const toggleName = (value: string) => {
         setName(value);
-    }
-
-    const toggleDocument = (value: string) => {
-        setDocument(value);
     }
 
     const togglePhone = (value: string) => {
@@ -62,8 +99,6 @@ export default function AccountUpsertController(){
     return {
         name,
         toggleName,
-        document,
-        toggleDocument,
         phone,
         togglePhone,
         street,
