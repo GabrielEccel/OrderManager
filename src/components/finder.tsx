@@ -21,7 +21,7 @@ export default function Finder({ item, onFiltered }: FinderProps) {
         }
 
         const filtered = item.filter(item =>
-            item.name.toLowerCase().includes(text.toLowerCase())
+            item.name.toLowerCase().includes(text.toLowerCase()) || item.phone.replace(/\D/g, '').includes(text)
         );
 
         onFiltered(filtered)
